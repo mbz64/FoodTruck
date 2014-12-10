@@ -56,10 +56,19 @@ public class FoodTruckDataLoader {
 		}
 	}
 
+	private void showError() {
+		System.out.println("Error in run arguments. Expected:");
+		System.out.println("arg[0] - datafile");
+		System.out.println("arg[1] - dbconfigfile");
 
+	}
 	public static void main(String argv[]) {
 
 		FoodTruckDataLoader dl = new FoodTruckDataLoader();
+		if (argv.length < 2) {
+			dl.showError();
+			return;
+		}
 		try {
 			FileParser fp = dl.createFileParser(argv[0]);
 			Storage st = dl.createStorageAccess(argv[1]);
