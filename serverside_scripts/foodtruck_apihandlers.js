@@ -9,27 +9,28 @@ exports.init = function() {
 exports.getNearestFoodTrucks = function(latitude, longitude, radius, resultfn) {
 	var itemList = [];
 	dbutil.getNearest(latitude, 
-					  longitude,
-					  radius,
-					  function(item) {
-						  itemList.push(item)	
-					  },
-					  function() {
-						resultfn(itemList)
-					  }
-					  
-					 )
+			  longitude,
+			  radius,
+			  function(item) {
+				  itemList.push(item)	
+			  },
+			  function() {
+				resultfn(itemList)
+			  }
+			  
+			 )
 }
+
 
 exports.getDetail = function(id, resultfn) {
 	var itemJSON;
 	dbutil.getDetail(id, 
-					  function(item) {
-						  itemJSON = item;
-					  },
-					  function() {
-						 resultfn(itemJSON)
-					  }
-					  
-					 )
+		  function(item) {
+			  itemJSON = item;
+		  },
+		  function() {
+			 resultfn(itemJSON)
+		  }
+		  
+		 )
 }	

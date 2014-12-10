@@ -1,0 +1,154 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Food Trucks around SF</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 80%;
+        margin: 5px;
+        padding: 5px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+var map;
+var marker;
+var curlocation;
+function initialize() {
+  curlocation = new google.maps.LatLng(37.775612, -122.417958)
+  var mapOptions = {
+    zoom: 15,
+    center: curlocation
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+ addMarker(curlocation)
+
+	  // This event listener will call addMarker() when the map is clicked.
+	  google.maps.event.addListener(map, 'click', function(event) {
+	    addMarker(event.latLng);
+          });
+
+// Add a marker to the map
+function addMarker(loc) {
+   curlocation = loc
+   if (marker != null) {
+	marker.setMap(null);
+   }
+  marker = new google.maps.Marker({
+    position: curlocation,
+    map: map
+  });
+  map.setCenter(curlocation);
+
+}
+
+
+}
+
+function sendHTTP(dest, param, win, fail) {
+        deleteRow('dataTable')		
+        var url = 'http://ec2-54-67-62-55.us-west-1.compute.amazonaws.com/'+dest
+	var addr = url+"?"+param;
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+        xmlhttp.open('GET', addr);
+	xmlhttp.onreadystatechange = function()
+	{
+	    if((xmlhttp.readyState == 4) && (xmlhttp.status == 200)) {
+
+		var jsonResponse = JSON.parse(xmlhttp.responseText);
+
+		if (jsonResponse.length > 0) {
+			for (var i = 0; i < jsonResponse.length; i++) {
+			    var obj = jsonResponse[i];
+			    addRow('dataTable', obj)	
+			}
+		} else {
+			alert("no-element");
+		}
+
+	    }
+	}
+        xmlhttp.send(null);
+
+}
+
+function getfoodTrucks() {
+	 var lat = curlocation.lat();
+         var lng = curlocation.lng();
+	 var send = "latitude="+lat.toString() + "&longitude="+ lng.toString() + "&radius=400";
+	 sendHTTP('list', 
+		   send,
+		   function(result) {
+		   },
+		   function() {
+			var mytext = "error";
+			document.write(mytext);
+		   }
+	 );
+}
+
+
+   function addRow(tableID, obj) {
+ 
+            var table = document.getElementById(tableID);
+ 
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+ 
+            var cell1 = row.insertCell(0);
+	    cell1.innerHTML = obj._id;
+
+            var cell2 = row.insertCell(1);
+	    cell2.innerHTML = obj.name;
+
+            var cell3 = row.insertCell(2);
+	    cell3.innerHTML = obj.address;
+
+            var cell4 = row.insertCell(3);
+	    cell4.innerHTML = obj.facilitytype;
+ 
+        }
+ 
+function deleteRow(tableID) {
+   try {
+    var table = document.getElementById(tableID);
+    var rowCount = table.rows.length;
+
+    for(var i = rowCount - 1; i > 0; i--) {
+            table.deleteRow(i);
+        }
+    
+    }catch(e) {
+        alert(e);
+    }
+}
+ 
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+
+
+	<INPUT type="button" value="Get Nearby Food Trucks" onclick="getfoodTrucks()" />
+ 
+ 
+    <TABLE id="dataTable" width="350px" border="1">
+        <TR>
+            <TD>ID</TD>
+            <TD>Name</TD>
+	    <TD>Address</TD>
+            <TD>Facility Type</TD>
+        </TR>
+    </TABLE>
+
+  </body>
+</html>
+

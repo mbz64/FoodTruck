@@ -66,6 +66,7 @@ exports.getNearest = function(latitude, longitude, radius, onData, onEnd, onFail
 					  }
 				   }
 				}
+
 	var fields = {
 				name:1,
 				address :1,
